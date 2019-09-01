@@ -61,6 +61,8 @@ public class Stack<Item> implements Iterable<Item> {
             first = new Node<>();
             first.item = item;
             last = first;
+            first.prev = last;
+            last.next = first;
             stackSize++;
 
         }
