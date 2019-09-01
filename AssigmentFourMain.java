@@ -26,13 +26,11 @@ public class AssigmentFourMain {
         System.out.println(first);
 
         first.insertElement(16,25);
+        first.priorityInsert(34);
 
         System.out.println(first);
 
         first.priorityInsert(15);
         System.out.println(first);
-
-
-
     }
 }

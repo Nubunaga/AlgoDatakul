@@ -35,12 +35,11 @@ import java.util.NoSuchElementException;
 public class Stack<Item> implements Iterable<Item> {
     private Node<Item> first;
     private int stackSize;
-    private Node<Item> last;
+    private Node<Item> end;
 
     private class Node<Item>{
         private Item item;
         private Node<Item> next;
-        private Node<Item> prev;
     }
     /**
      * Constructor for the new stack object.
@@ -60,15 +59,11 @@ public class Stack<Item> implements Iterable<Item> {
         if(first == null){
             first = new Node<>();
             first.item = item;
-            last = first;
-            first.prev = last;
-            last.next = first;
-            stackSize++;
-
         }
         else {
             newNode(item);
         }
+            stackSize++;
     }
 
     /**
@@ -86,11 +81,9 @@ public class Stack<Item> implements Iterable<Item> {
      * Takes the size of the current stack and returns it to the caller
      * @return stackSize, an integer data type with the current value.
      * */
-    public int size(){
+    public int getSize() {
         return stackSize;
     }
-
-
     private boolean isEmpty(){
         return this.first == null;
     }
@@ -126,12 +119,11 @@ public class Stack<Item> implements Iterable<Item> {
      * Overrides the current <code> toString </code> allowing for the stdout to show the
      * objects value instead of the reference to the memory address.
      * */
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(Item item : this){
-            sb.append(item);
-            sb.append(" ");
-        }
+    for(Item item : this){
+        sb.append(item + " ");
+    }
         return sb.toString();
     }
 
@@ -152,14 +144,11 @@ public class Stack<Item> implements Iterable<Item> {
         first = new Node<>();
         first.item = item;
         first.next = oldNode;
-        last.next = first;
-        stackSize++;
     }
 
     private Item popedNode(){
         Item item = first.item;
         first = first.next;
-        first.next.prev = first.next;
         stackSize--;
         return item;
     }
@@ -208,6 +197,4 @@ public class Stack<Item> implements Iterable<Item> {
         }
 
     }
-
-
 }
