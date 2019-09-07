@@ -1,4 +1,4 @@
-import java.io.FileReader;
+
 
 /**
  * This main will be there to help the user check if the generic circular
@@ -18,5 +18,7 @@ public class Main {
         fifo.enterQueue(5);
         fifo.enterQueue(6);
         fifo.enterQueue(7);
+
+        fifo.removeKthNode(5);
     }
 }

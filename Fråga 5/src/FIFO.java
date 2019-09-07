@@ -61,23 +61,6 @@ public class FIFO<Item> implements Iterable<Item>{
         if(isEmptyLast())throw new NoSuchElementException();
         return popedNode();
     }
-    /**
-     * Takes the end of the list and removes that node.
-     * @throws
-     * */
-    public Item removeLast(){
-        if(isEmptyLast());
-       return deenterQueue();
-    }
-
-    public Item removeFront(){
-        if(isEmptyFirst())throw new NoSuchElementException();
-        Item item = first.item;
-        first = first.next;
-        first.prev = last;
-        printQueue();
-        return item;
-    }
 
     /**
      * Checks the first queue in the line.
@@ -100,12 +83,13 @@ public class FIFO<Item> implements Iterable<Item>{
             temp = temp.next;
             }
         item = temp.item;
-        temp.prev = temp.next;
-        temp.next = temp.next.next;
-        indexRemove();
+        temp.prev.next = temp.next;
+        temp.next.prev = temp.prev;
+        indexRemove(i);
         printQueue();
         return item;
     }
+
     private void indexAdd(){
         Node temp = first;
         while(temp.next != last.next){
@@ -115,9 +99,9 @@ public class FIFO<Item> implements Iterable<Item>{
         if(temp.next == last.next)temp.index++;
     }
 
-    private void indexRemove(){
+    private void indexRemove(int i){
         Node temp = first;
-        while(temp.next != last.next){
+        while(temp.next.index > i){
             temp.index--;
             temp = temp.next;
         }
@@ -170,9 +154,9 @@ public class FIFO<Item> implements Iterable<Item>{
 
     private Item popedNode(){
         Item item = last.item;
+        indexRemove(last.index);
         last.prev.next = first;
         last = last.prev;
-       indexRemove();
         printQueue();
         return item;
     }
