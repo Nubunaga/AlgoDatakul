@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
  *
  */
 
-public class FIFO<Item> implements Iterable<Item>{
+public class FIFOtest<Item> implements Iterable<Item>{
     private int stackSize;
     private Node<Item> first;
     private Node<Item> last;
@@ -28,12 +28,17 @@ public class FIFO<Item> implements Iterable<Item>{
         private Item item;
         private Node<Item> next;
         private Node<Item> prev;
-        private int index;
+        private Index index;
+    }
+
+    public class Index<Item>{
+        private Node node = first;
+        private int id;
     }
     /**
      * Constructor for the circle double linked list stack.
      * */
-    public FIFO(){
+    public FIFOtest(){
         first = null;
         last = null;
         stackSize = 0;
@@ -42,15 +47,13 @@ public class FIFO<Item> implements Iterable<Item>{
     /**
      * Push method for the circle list, making sure to push the Node correct.
      * */
-    public void enterQueue(Item i){
+    public Index enterQueue(Item i){
         if(isEmptyLast()){
-            setHead(i);
+           return setHead(i);
         }
         else{
-            newNode(i);
+           return newNode(i);
         }
-        stackSize++;
-        printQueue();
     }
     /**
      * Takes the <code> Item </code> from the list and then removes the node with that item.
@@ -74,50 +77,45 @@ public class FIFO<Item> implements Iterable<Item>{
 
     /**
      * Allows the user to remove the kth element depending on input index.
-     * @param i an integer primitive value to be looked for in the list.
+     * @param id is the node ID to be removed.
      * @return Item a generalised object.
      * */
-    public Item removeKthNode(int i){
-        Node<Item> temp = first;
-        Item item;
-        while(temp.index != i){
-            temp = temp.next;
-            }
-        item = temp.item;
-        temp.prev.next = temp.next;
-        temp.next.prev = temp.prev;
-        indexRemove(i);
+    public Item removeKthNode(Index<Item> id){
+        id.node.prev.next = id.node.next;
+        id.node.next.prev = id.node.prev;
+        indexRemove(id.node.index.id);
         printQueue();
-        return item;
+        return (Item) id.node.item;
     }
+
 
     private void indexAdd(){
         Node temp = first;
         while(temp.next != last.next){
-            temp.index++;
+            temp.index.id++;
             temp = temp.next;
         }
-        if(temp.next == last.next)temp.index++;
+        if(temp.next == last.next)temp.index.id++;
     }
 
     private void indexRemove(int i){
         Node temp = first;
-        while(temp.index >= i){
-            temp.index--;
+        while(temp.index.id > i){
+            temp.index.id--;
             temp = temp.next;
         }
-        if(temp.next == last.next)temp.index--;
+        if(temp.next == last)temp.index.id--;
 
     }
 
     private void printQueue(){
         Node node = first;
         while(node.next != last.next){
-            System.out.print(" {" +node.item+"}id:"+node.index+",");
+            System.out.print(" " +node.item+"["+node.index.id+"]");
             node = node.next;
         }
         if(node.next == last.next){
-            System.out.print(" {" +node.item+"}id:"+node.index+"");
+            System.out.print(" " +node.item+"["+node.index.id+"]");
         }
         System.out.print("\n");
     }
@@ -143,34 +141,43 @@ public class FIFO<Item> implements Iterable<Item>{
         return first == null;
     }
 
-    private void setHead(Item item){
+    private Index setHead(Item item){
         first = new Node<>();
         first.item = item;
-        first.index = 1;
+        first.index = new Index();
+        first.index.id = 1;
+        first.index.node = first;
         last = first;
         first.next = last;
         last.prev = first;
-
+        stackSize++;
+        printQueue();
+        return first.index;
     }
 
     private Item popedNode(){
         Item item = last.item;
-        indexRemove(last.index);
+        indexRemove(last.index.id);
         last.prev.next = first;
         last = last.prev;
         printQueue();
         return item;
     }
 
-    private void newNode(Item item){
+    private Index newNode(Item item){
         Node oldNode = last;
         last = new Node<>();
         last.item = item;
-        last.index = 0;
+        last.index = new Index();
+        last.index.id = 0;
+        last.index.node = last;
         last.next = first;
         last.prev = oldNode;
         oldNode.next = last;
         indexAdd();
+        stackSize++;
+        printQueue();
+        return last.index;
     }
 
 

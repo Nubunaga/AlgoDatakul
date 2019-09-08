@@ -9,6 +9,7 @@
 public class Main {
     public static void main(String[] args){
 
+
         FIFO fifo = new FIFO();
 
         fifo.enterQueue(1);
@@ -20,5 +21,12 @@ public class Main {
         fifo.enterQueue(7);
 
         fifo.removeKthNode(5);
+
+        FIFOtest fifOtest = new FIFOtest();
+        FIFOtest.Index [] arr = new FIFOtest.Index[7];
+        for(int i = 1; i < arr.length; i++){
+           arr[i] = fifOtest.enterQueue(i);
+        }
+        fifOtest.removeKthNode(arr[5]);
     }
 }
