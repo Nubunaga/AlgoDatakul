@@ -1,5 +1,6 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 /**
  * This class will create an general ordered queue based on the ADT <em> QUEUE </em>
@@ -17,13 +18,16 @@ import java.util.NoSuchElementException;
  * @version 2 2019-06/9 : Bug fixes of the sorting algorithm.
  * <ref> C:\Users\tomas\Desktop\AlgoData\Fråga 5\src.FIFO.java</ref>
  * Also the Same FIFO concept from last question i.e 5.
+ * runtime 0.0049 seconds.
  * */
 
 public class OrderdQueue<Item> implements Iterable<Item>{
     private int stackSize;
     private Node<Item> first;
     private Node<Item> last;
-
+    /**
+     * Constructor for the node class.
+     * */
     private class Node<Item>{
         private Item item;
         private Node<Item> next;
@@ -54,6 +58,15 @@ public class OrderdQueue<Item> implements Iterable<Item>{
         stackSize++;
         printQueue();
     }
+
+    public Item deenterQueue(){
+        Item item = last.item;
+        last.prev.next = last.next;
+        last = last.prev;
+        stackSize--;
+        printQueue();
+        return item;
+    }
     /**
      * Returns the state of the first (last) node in the system.
      * @return true if it is null, false if has a node in it.
@@ -62,9 +75,18 @@ public class OrderdQueue<Item> implements Iterable<Item>{
         return last == null;
     }
 
+    public Item getItem(){
+        return first.item;
+    }
+
+
+    /**
+     * Inserts a new method in the list.
+     * @param node contains new value
+     * */
     private void newNode(Node<Item> node){
         Node<Item> temp = last;
-        if((int) node.item <= (int) temp.item ){
+        if(nodeCompare(node,temp)){
            temp.next = node;
            node.prev = temp;
            node.next = first;
@@ -75,12 +97,26 @@ public class OrderdQueue<Item> implements Iterable<Item>{
         }
 
     }
+    /**
+     * compares the item in the node
+     * @param node contains the new value. in one case, the current.
+     * @param temp is the temporary pointer to the current item.
+     * */
+    private boolean nodeCompare(Node<Item> node, Node <Item> temp){
+      return  (int) node.item <= (int) temp.item;
+    }
 
+    /**
+     * Checks for the values of the node and inserts accordingly.
+     * @param node is the new value.
+     * @param temp is the current looked on item.
+     * */
     private void orderInsert(Node<Item> node, Node<Item> temp){
         boolean flag = false;
         while (temp != first){
-            if((int) node.item <= (int) temp.item){
+            if(nodeCompare(node,temp)){
                 node.next = temp.next;
+                temp.next.prev = node;
                 temp.next = node;
                 node.prev = temp;
                 flag = true;
@@ -92,9 +128,11 @@ public class OrderdQueue<Item> implements Iterable<Item>{
         }
      if(!flag)orderHeadofQueue(node,temp);
     }
-
+    /**
+     * Checks if the node should be head of the queue or not.
+     * */
     private void orderHeadofQueue(Node<Item> node, Node<Item> temp){
-        if(((int)temp.item <= (int)node.item)){
+        if((nodeCompare(temp,node))){
             node.next = temp;
             temp.prev = node;
             first = node;
@@ -102,20 +140,26 @@ public class OrderdQueue<Item> implements Iterable<Item>{
         }
         else {
             node.next = temp.next;
+            temp.next.prev = node;
             temp.next = node;
             node.prev = temp;
         }
     }
-
+    /**
+     * Set the last to a new node.
+     * */
     private void setLast(Node node){
         last = node;
         first = node;
         last.next = first;
         last.prev = first;
     }
+    /**
+     * Prints the queue in reverse
+     * */
     private void printQueue(){
         int count = 0;
-        Node node = first;
+        Node node = last;
         if(stackSize == 1){
             System.out.println("["+node.item+"] ");
         }
@@ -123,7 +167,7 @@ public class OrderdQueue<Item> implements Iterable<Item>{
             while (count < stackSize) {
                 System.out.print("[" + node.item + "] ");
 
-                node = node.next;
+                node = node.prev;
                 count++;
             }
             System.out.print("\n");
@@ -168,6 +212,38 @@ public class OrderdQueue<Item> implements Iterable<Item>{
         public boolean hasNext(){
             return this.current != null;
         }
+
+    }
+    /**
+     * This method serves as the start method for the virtual machine and contains a random integer
+     * generator that throws different numbers into the list.
+     * @param args contains an array of string given by the user in cmd.
+     * */
+    public static void main(String[] args){
+        long startTime;
+        long endTime;
+        double[] time = new double[5];
+        double runTime = 0;
+        OrderdQueue<Integer> orderQueue = new OrderdQueue<>();
+
+        Random random = new Random();
+
+        for(int i =0; i<5; i++){
+            startTime = System.nanoTime();
+            orderQueue.enterQueue(random.nextInt(10));
+            endTime = System.nanoTime();
+            time[i] = (endTime - startTime)/(1*Math.pow(10,9));
+        }
+
+        for(double d: time){
+            runTime += d;
+        }
+        runTime = runTime/5;
+
+        orderQueue.deenterQueue();
+
+        System.out.print("Mean runtime is : " + runTime);
+
 
     }
 }

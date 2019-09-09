@@ -6,17 +6,17 @@ import java.util.NoSuchElementException;
  * that will be used for the FIFO ADT. It will utilize a <em> Node </em> nestle class
  * set to <code> private </code> to only be able to be used by the programmer in. This class will also
  * implement the iterator so that it can go through the list. The code should also be able to remove the
- * first of the queue and last.
+ * first of the queue and last without damaging the rest of the program.
  *
  * @author Netanel Avraham Eklind
  * @version 1 2019-09-04
  *
  * Question:
  * < a href : https://kth.instructure.com/courses/12734/pages/the-fundamentals-labpm?module_item_id=137881>
- *  * question 3 and 4</>.
+ *  * question 3 </>.
  *  There will be a implementation of the same code used in <dir> C:\Users\tomas\Desktop\AlgoData\Code\src\
  *  FundamentalsLabb\stack.java</dir>. And the iterator there
- *
+ *  Runtime is: 0.03 seconds, at 100 items: 0.33 seconds.
  */
 
 public class FIFO<Item> implements Iterable<Item>{
@@ -24,6 +24,9 @@ public class FIFO<Item> implements Iterable<Item>{
     private Node<Item> first;
     private Node<Item> last;
 
+    /**
+     * private constructor for the nested node class.
+     * */
     private class Node<Item>{
         private Item item;
         private Node<Item> next;
@@ -60,42 +63,26 @@ public class FIFO<Item> implements Iterable<Item>{
         if(isEmptyLast())throw new NoSuchElementException();
         return popedNode();
     }
-    /**
-     * Takes the end of the list and removes that node.
-     * @throws
-     * */
-    public Item removeLast(){
-        if(isEmptyLast());
-       return deenterQueue();
-    }
-
-    public Item removeFront(){
-        if(isEmptyFirst())throw new NoSuchElementException();
-        Item item = first.item;
-        first = first.next;
-        first.prev = last;
-        printQueue();
-        return item;
-    }
 
     /**
-     * Checks the first queue in the line.
-     * @return the generic item.
-     * @throws NoSuchElementException if there is no element in queue
+     * Takes the last item in the node, witch being in the FIFO ADT the first item to remove.
+     * @return the item in the first (last) node.
      * */
-    public Item peek(){
-        if (isEmptyLast()) throw new NoSuchElementException();
-        return first.item;
+    public Item getLastItem(){
+        return last.item;
     }
-
+    /**
+     * goes through the linked list and prints each node to the stdout and thus
+     * goes to the screen.
+     * */
     private void printQueue(){
         Node node = first;
-        if(stackSize < 1)System.out.print(node.item);
+        if(stackSize < 1)System.out.print("["+node.item+"]");
         while(node.next != last.next){
-            System.out.print(node.item);
+            System.out.print(" ["+node.item+"],");
             node = node.next;
         }
-        System.out.print(node.item);
+        System.out.print(" ["+ node.item+"]");
         System.out.print("\n");
     }
 
@@ -120,6 +107,10 @@ public class FIFO<Item> implements Iterable<Item>{
         return first == null;
     }
 
+    /**
+     * An algorithm that sets the head of the node.
+     * @param item generic value item.
+     * */
     private void setHead(Item item){
         first = new Node<>();
         first.item = item;
@@ -127,15 +118,21 @@ public class FIFO<Item> implements Iterable<Item>{
         first.next = last;
         last.prev = first;
     }
-
+    /**
+     * pops the node that has been recently added
+     * @return the generic value of that node.
+     * */
     private Item popedNode(){
-        Item item = first.item;
-        first = first.next;
-        first.prev = last;
+        Item item = last.item;
+        last = last.prev;
+        last.next = first;
         printQueue();
         return item;
     }
-
+    /**
+     * Insert a new node into the queue.
+     * @param item is the generic value to be placed in the node.
+     * */
     private void newNode(Item item){
         Node oldNode = last;
         last = new Node<>();
@@ -185,5 +182,32 @@ public class FIFO<Item> implements Iterable<Item>{
             return this.current != null;
         }
 
+    }
+
+    /**
+     * The function that takes the start argument and runs the program in the virtual machine.
+     * @param args an array of string arguments that the user can input.
+     * */
+    public static void main(String[]args) {
+        long startTime;
+        long endTime;
+        double runTime = 0;
+
+        FIFO fifo = new FIFO();
+
+        startTime = System.nanoTime();
+        for(int i = 0; i <= 10;i++){
+            fifo.enterQueue(i);
+        }
+        for(int i = fifo.queueSize(); i > 0; i-- ){
+            fifo.deenterQueue();
+        }
+        for(int i = 1; i <= 9;i++){
+            fifo.enterQueue(i);
+        }
+        System.out.print("\n");
+        endTime = System.nanoTime();
+        runTime = (endTime - startTime)/(1*Math.pow(10,9));
+        System.out.print("Runtime: " + runTime);
     }
 }

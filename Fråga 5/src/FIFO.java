@@ -24,6 +24,9 @@ public class FIFO<Item> implements Iterable<Item>{
     private Node<Item> first;
     private Node<Item> last;
 
+    /**
+     * Constructor for the Node object in the linked list
+     * */
     private class Node<Item>{
         private Item item;
         private Node<Item> next;
@@ -53,44 +56,20 @@ public class FIFO<Item> implements Iterable<Item>{
         printQueue();
     }
     /**
-     * Takes the <code> Item </code> from the list and then removes the node with that item.
-     * @return Item  generic Item with any value.
-     * @throws NoSuchElementException if there is no element in queue.
-     * */
-    public Item deenterQueue(){
-        if(isEmptyLast())throw new NoSuchElementException();
-        return popedNode();
-    }
-
-    /**
-     * Checks the first queue in the line.
-     * @return the generic item.
-     * @throws NoSuchElementException if there is no element in queue
-     * */
-    public Item peek(){
-        if (isEmptyLast()) throw new NoSuchElementException();
-        return first.item;
-    }
-
-    /**
      * Allows the user to remove the kth element depending on input index.
      * @param i an integer primitive value to be looked for in the list.
      * @return Item a generalised object.
      * */
     public Item removeKthNode(int i){
-        Node<Item> temp = first;
-        Item item;
-        while(temp.index != i){
-            temp = temp.next;
-            }
-        item = temp.item;
-        temp.prev.next = temp.next;
-        temp.next.prev = temp.prev;
+        Item item = popKthNode(i);
         indexRemove(i);
         printQueue();
         return item;
     }
-
+    /**
+     * Goes through the index and adds a new value, this when a
+     * new node is added.
+     * */
     private void indexAdd(){
         Node temp = first;
         while(temp.next != last.next){
@@ -99,7 +78,13 @@ public class FIFO<Item> implements Iterable<Item>{
         }
         if(temp.next == last.next)temp.index++;
     }
-
+    public int getIndex(){
+        return first.index;
+    }
+    /**
+     * Removes the index to a specific value that have been removed.
+     * @param i is the recently removed index.
+     * */
     private void indexRemove(int i){
         Node temp = first;
         while(temp.index >= i){
@@ -109,15 +94,17 @@ public class FIFO<Item> implements Iterable<Item>{
         if(temp.next == last.next)temp.index--;
 
     }
-
+    /**
+     * Prints the linked list
+     * */
     private void printQueue(){
         Node node = first;
         while(node.next != last.next){
-            System.out.print(" {" +node.item+"}id:"+node.index+",");
+            System.out.print(" [" +node.item+"]Index:"+node.index+",");
             node = node.next;
         }
         if(node.next == last.next){
-            System.out.print(" {" +node.item+"}id:"+node.index+"");
+            System.out.print(" [" +node.item+"]Index:"+node.index+"");
         }
         System.out.print("\n");
     }
@@ -131,18 +118,16 @@ public class FIFO<Item> implements Iterable<Item>{
     }
     /**
      * Checks if the last, last node, is filled.
+     * @return true /false
      * */
     public boolean isEmptyLast(){
         return last == null;
     }
 
     /**
-     * Checks if the first, first node, is filled.
+     * Sets the new head.
+     * @param item is the generic value to be added to node.
      * */
-    public boolean isEmptyFirst(){
-        return first == null;
-    }
-
     private void setHead(Item item){
         first = new Node<>();
         first.item = item;
@@ -152,16 +137,27 @@ public class FIFO<Item> implements Iterable<Item>{
         last.prev = first;
 
     }
-
-    private Item popedNode(){
-        Item item = last.item;
-        indexRemove(last.index);
-        last.prev.next = first;
-        last = last.prev;
-        printQueue();
+    /**
+     * Removes the Kth node from the list
+     * @param i is the index value to look for.
+     * @return the generic value present in the node
+     * */
+    private Item popKthNode(int i){
+        Node<Item> temp = first;
+        Item item;
+        while(temp.index != i){
+            temp = temp.next;
+        }
+        item = temp.item;
+        temp.prev.next = temp.next;
+        temp.next.prev = temp.prev;
         return item;
     }
 
+    /**
+     * Inserts a new node into the list.
+     * @param item contains generic value to be added to a node.
+     * */
     private void newNode(Item item){
         Node oldNode = last;
         last = new Node<>();
@@ -212,6 +208,31 @@ public class FIFO<Item> implements Iterable<Item>{
         public boolean hasNext(){
             return this.current != null;
         }
+    }
+    /**
+     * Start function that the virtual machine calls to start the program.
+     * @param args is a string array containing input from the user.
+     * */
+    public static void main(String[] args){
 
+
+        FIFO fifo = new FIFO();
+
+        fifo.enterQueue(1);
+        fifo.enterQueue(2);
+        fifo.enterQueue(3);
+        fifo.enterQueue(4);
+        fifo.enterQueue(5);
+        fifo.enterQueue(6);
+        fifo.enterQueue(7);
+
+        fifo.removeKthNode(5);
+
+        TestofFIFOIndex fifOtest = new TestofFIFOIndex();
+        TestofFIFOIndex.Index [] arr = new TestofFIFOIndex.Index[7];
+        for(int i = 1; i < arr.length; i++){
+            arr[i] = fifOtest.enterQueue(i);
+        }
+        fifOtest.removeKthNode(arr[5]);
     }
 }

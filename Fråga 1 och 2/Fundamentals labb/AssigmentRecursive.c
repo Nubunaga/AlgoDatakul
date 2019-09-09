@@ -28,11 +28,13 @@ void printRecursive(){
     putchar(c);
 }
 
+static void test(){
+    printRecursive();
+}
+
 /**
  * Runs the program and takes the input.
 */
 void main(){
-
-printRecursive();
-
+test();
 }

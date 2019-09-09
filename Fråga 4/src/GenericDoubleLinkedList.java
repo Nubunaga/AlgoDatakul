@@ -24,6 +24,9 @@ public class GenericDoubleLinkedList<Item> implements Iterable<Item>{
         private Node<Item> first;
         private Node<Item> last;
 
+        /**
+         * Constructor for the node
+         * */
         private class Node<Item>{
             private Item item;
             private Node<Item> next;
@@ -40,8 +43,9 @@ public class GenericDoubleLinkedList<Item> implements Iterable<Item>{
         /**
          * Adds a new element to the list
          * @param item generic value of the input.
+         * @param
          * */
-        public void push(Item item){
+        public void push(Item item,String chose){
             if(isEmpty()){
                 first = new Node<>();
                 first.item = item;
@@ -49,10 +53,25 @@ public class GenericDoubleLinkedList<Item> implements Iterable<Item>{
                 last.next = first;
             }
             else{
-                insertNode(item);
+                switch (chose){
+                    case "First":
+                        insertNode(item);
+                        break;
+                    case"Last":
+                        insertNodeLastt(item);
+                        break;
+                }
             }
                 stackSize++;
                 printQueue();
+        }
+
+    /**
+         * returns the stack size of the list.
+         * @return the int value of the size
+         * */
+    public int getStackSize(){
+            return stackSize;
         }
         /**
          * Implements basic strategy pattern by choosing on command
@@ -60,16 +79,14 @@ public class GenericDoubleLinkedList<Item> implements Iterable<Item>{
          * @param node is the name for the node to remove or "pop".
          * @throws NoSuchElementException if there is no element in that spot.
          * */
+
         public Item pop(String node){
             if(isEmpty())throw new NoSuchElementException("No element found");
             switch (node){
                 case "First":
-                    printQueue();
                     return popFirst();
                 case "Last":
-                    printQueue();
                     return popLast();
-
                     default:
                         return null;
             }
@@ -81,7 +98,9 @@ public class GenericDoubleLinkedList<Item> implements Iterable<Item>{
         public boolean isEmpty(){
             return first == null;
         }
-
+        /**
+         * Prints the queue linked list.
+         * */
         private void printQueue(){
             int count = 0;
         for(Item i: this){
@@ -94,7 +113,21 @@ public class GenericDoubleLinkedList<Item> implements Iterable<Item>{
         }
         System.out.print("\n");
     }
+    /**
+     * Inserts a node at the end of the list.
+     * */
+    private void insertNodeLastt(Item item){
+            Node<Item> oldLast = last;
+            last = new Node<>();
+            last.item = item;
+            last.next = first;
+            oldLast.next = last;
+    }
 
+    /**
+     * Inserts the new node into the list.
+     * @param item is the generic value that will be present
+     * */
         private void insertNode(Item item){
             Node oldNode = first;
             first = new Node<>();
@@ -102,23 +135,31 @@ public class GenericDoubleLinkedList<Item> implements Iterable<Item>{
             first.next = oldNode;
             last.next = first;
         }
-
+        /**
+         * Pops the first node in the linked list and returns the value
+         * @return the generic value in the linked list.
+         * */
         private Item popFirst(){
             Item item = first.item;
             first = first.next;
             last.next = first;
             stackSize--;
+            printQueue();
             return item;
         }
-
+        /**
+         * pops the last node in the system and returns that value.
+         * @return the generic item value.
+         * */
         private Item popLast(){
             Node<Item> temp = first;
-            while(temp.next != first){
+            while(temp.next != last){
                 temp = temp.next;
             }
             Item item = temp.next.item;
             temp.next = first;
             stackSize--;
+            printQueue();
             return item;
         }
 
@@ -130,10 +171,16 @@ public class GenericDoubleLinkedList<Item> implements Iterable<Item>{
     public Iterator<Item> iterator(){
         return  new ListIterator(first);
     }
-
+    /**
+     * The nested iterator class.
+     * implements Iterator.
+     * */
     private class ListIterator implements Iterator<Item>{
         private Node<Item> current;
 
+        /**
+         * sets the current node to point to.
+         * */
         private ListIterator(Node<Item> first){
             this.current = first;
         }
@@ -177,10 +224,11 @@ public class GenericDoubleLinkedList<Item> implements Iterable<Item>{
         double totalRuntime;
         Random random = new Random();
 
-        for(int i =0; i<5; i++){
+        for(int i =0; i<3; i++){
             startTime = System.nanoTime();
-            genericDoubleLinkedList.push(random.nextInt(10));
+            genericDoubleLinkedList.push(random.nextInt(10),args[0]);
             endTime = System.nanoTime();
+            genericDoubleLinkedList.push(random.nextInt(10),args[1]);
             time[i] = (endTime - startTime)/(1*Math.pow(10,9));
         }
         for(double d: time){
@@ -189,19 +237,13 @@ public class GenericDoubleLinkedList<Item> implements Iterable<Item>{
         System.out.print("The push algorithm goes on: "+ runtime +"\n");
 
         totalRuntime =+ runtime;
-        runtime = 0;
 
-        for(int i =0; i<5; i++){
             startTime = System.nanoTime();
-            genericDoubleLinkedList.pop("First");
-            genericDoubleLinkedList.pop("Last");
+            genericDoubleLinkedList.pop(args[0]);
+            genericDoubleLinkedList.pop(args[1]);
             endTime = System.nanoTime();
-            time[i] = (endTime - startTime)/(1*Math.pow(10,9));
-        }
+           runtime = (endTime - startTime)/(1*Math.pow(10,9));
 
-        for(double d: time){
-            runtime += d;
-        }
 
         System.out.print("\n The pop algorithm goes on: " + runtime);
 
